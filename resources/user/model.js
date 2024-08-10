@@ -4,35 +4,94 @@ import bcrypt from 'bcrypt';
 mongoose.set('strictQuery', true);
 
 const userSchema = new mongoose.Schema({
-  password: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
+  cedula: {
+    type: Number,
     required: true,
     unique: true,
-    trim: true,
   },
+  nombre: {
+    type: String,
+    required: true,
+    maxlength: 100,
+  },
+  segundo_nombre: {
+    type: String,
+    maxlength: 100,
+  },
+  apellido: {
+    type: String,
+    required: true,
+    maxlength: 100,
+  },
+  segundo_apellido: {
+    type: String,
+    maxlength: 100,
+  },
+  correo: {
+    type: String,
+    required: true,
+    maxlength: 100,
+  },
+  clave: {
+    type: String,
+    required: true,
+    maxlength: 20,
+  },
+  telefono: {
+    type: Number,
+    required: true,
+  },
+  f_nac: {
+    type: Date,
+    required: true,
+  },
+  rol: {
+    type: String,
+    //required: true,
+    maxlength: 100,
+  },
+  habilidades: {
+    type: String,
+    required: true,
+    maxlength: 200,
+  },
+  foto: {
+    type: String,
+    default: null,
+  },
+  tipo: {
+    type: String,
+    enum: ['estudiante', 'docente', 'jubilado'],
+    required: true,
+  },
+  titulo: [
+    {
+      f_graduacion: { type: Date, required: true },
+      nivel: { type: String, maxlength: 100 },
+      area: { type: String, maxlength: 50 },
+      foto: { type: String },
+    },
+  ],
 });
 
 userSchema.pre('save', function (next) {
-  if (!this.isModified('password')) {
+  if (!this.isModified('clave')) {
     return next();
   }
 
-  bcrypt.hash(this.password, 8, (err, hash) => {
+  bcrypt.hash(this.clave, 8, (err, hash) => {
     if (err) {
+      console.log(err);
       return next(err);
     }
-    this.email = this.email.toLowerCase();
-    this.password = hash;
+    this.correo = this.correo.toLowerCase();
+    this.clave = hash;
     next();
   });
 });
 
 userSchema.methods.checkPassword = function (password) {
-  const passwordHash = this.password;
+  const passwordHash = this.clave;
   return new Promise((resolve, reject) => {
     bcrypt.compare(password, passwordHash, (err, same) => {
       if (err) {
@@ -44,5 +103,4 @@ userSchema.methods.checkPassword = function (password) {
   });
 };
 
-
-export default mongoose.model("user", userSchema);
+export default mongoose.model('user', userSchema);

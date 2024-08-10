@@ -1,14 +1,32 @@
 ###
-GET  http://localhost:3000
+GET  http://localhost:5000
 
 ###
 
-POST http://localhost:3000/api/user/
+POST http://localhost:5000/api/user/
 Content-Type: application/json
 
 {
-    "email": "kharleann@gmail.com",
-    "password": "abcd1234"
+  "cedula": 1234567890,
+  "nombre": "Juan",
+  "segundo_nombre": "Carlos",
+  "apellido": "Pérez",
+  "segundo_apellido": "Gómez",
+  "correo": "juan.perez@example.com",
+  "clave": "password123",
+  "telefono": 987654321,
+  "f_nac": "1990-01-01",
+  "rol": "docente",
+  "habilidades": "JavaScript, Node.js",
+  "tipo": "docente",
+  "titulo": [
+    {
+      "f_graduacion": "2015-06-01",
+      "nivel": "Licenciatura",
+      "area": "Informática",
+      "foto": "titulo.jpg"
+    }
+  ]
 }
 
 ###
@@ -17,6 +35,7 @@ POST http://localhost:5000/api/user/login
 Content-Type: application/json
 
 {
-    "email": "kharleann@gmail.com",
-    "password": "abcd1234"
+    "email": "juan.perez@example.com",
+    "password": "password123"
 }
+

@@ -4,18 +4,22 @@ import { userDashboard } from './services.js';
 
 export const UserController = {
   create(req, res) {
-    const user = new UserModel(req.body)
+    console.log(req.body);
+    const user = new UserModel(req.body);
     user
       .save()
       .then((user) => {
         res.status(201).json(user);
       })
       .catch((err) => {
+        console.log(err);
         res.status(400).json(err);
       });
   },
   list(req, res) {
-    UserModel.find({}).lean().exec()
+    UserModel.find({})
+      .lean()
+      .exec()
       .then((users) => {
         res.status(200).json(users);
       })
@@ -24,7 +28,9 @@ export const UserController = {
       });
   },
   retrieve(req, res) {
-    UserModel.findById(req.params.id).lean().exec()
+    UserModel.findById(req.params.id)
+      .lean()
+      .exec()
       .then((user) => {
         res.status(200).json(user);
       })
@@ -33,7 +39,9 @@ export const UserController = {
       });
   },
   update(req, res) {
-    UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true }).lean().exec()
+    UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true })
+      .lean()
+      .exec()
       .then((user) => {
         res.status(200).json(user);
       })
@@ -42,7 +50,9 @@ export const UserController = {
       });
   },
   destroy(req, res) {
-    UserModel.findByIdAndRemove(req.params.id).lean().exec()
+    UserModel.findByIdAndRemove(req.params.id)
+      .lean()
+      .exec()
       .then((user) => {
         res.status(204).json(user);
       })
@@ -72,11 +82,10 @@ export const login = async (req, res) => {
 };
 
 export const dashboard = async (req, res) => {
-  try { 
+  try {
     const data = await userDashboard(req.user);
     res.status(200).json(data);
   } catch (err) {
     res.status(400).json(err);
   }
-  
 };
