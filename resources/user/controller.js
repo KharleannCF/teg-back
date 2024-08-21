@@ -4,7 +4,7 @@ import { userDashboard } from './services.js';
 
 export const UserController = {
   create(req, res) {
-    console.log(req.body);
+    console.log(req.file);
     const user = new UserModel(req.body);
     user
       .save()

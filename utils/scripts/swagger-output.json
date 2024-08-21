@@ -1,0 +1,300 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Tesis API",
+    "description": "Description",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/api-docs": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/user/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "description": "Upload data including a file",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "cedula",
+            "in": "formData",
+            "type": "integer",
+            "example": 1234567890
+          },
+          {
+            "name": "nombre",
+            "in": "formData",
+            "type": "string",
+            "example": "Juan"
+          },
+          {
+            "name": "segundo_nombre",
+            "in": "formData",
+            "type": "string",
+            "example": "Carlos"
+          },
+          {
+            "name": "apellido",
+            "in": "formData",
+            "type": "string",
+            "example": "Pérez"
+          },
+          {
+            "name": "segundo_apellido",
+            "in": "formData",
+            "type": "string",
+            "example": "Gómez"
+          },
+          {
+            "name": "correo",
+            "in": "formData",
+            "type": "string",
+            "example": "juan.perez@example.com"
+          },
+          {
+            "name": "clave",
+            "in": "formData",
+            "type": "string",
+            "example": "password123"
+          },
+          {
+            "name": "telefono",
+            "in": "formData",
+            "type": "integer",
+            "example": 987654321
+          },
+          {
+            "name": "f_nac",
+            "in": "formData",
+            "type": "string",
+            "format": "date",
+            "example": "1990-01-01"
+          },
+          {
+            "name": "rol",
+            "in": "formData",
+            "type": "string",
+            "example": "docente"
+          },
+          {
+            "name": "habilidades",
+            "in": "formData",
+            "type": "string",
+            "example": "JavaScript, Node.js"
+          },
+          {
+            "name": "tipo",
+            "in": "formData",
+            "type": "string",
+            "example": "docente"
+          },
+          {
+            "name": "titulo",
+            "in": "formData",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "f_graduacion": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "2015-06-01"
+                },
+                "nivel": {
+                  "type": "string",
+                  "example": "Licenciatura"
+                },
+                "area": {
+                  "type": "string",
+                  "example": "Informática"
+                },
+                "foto": {
+                  "type": "string",
+                  "example": "titulo.jpg"
+                }
+              }
+            }
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "type": "file",
+            "description": "File to be uploaded"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/dashboard": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/user/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "oldFileName": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  }
+}

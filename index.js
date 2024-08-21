@@ -3,6 +3,8 @@ import morgan from 'morgan';
 import cors from 'cors';
 import { connect } from './utils/db.js';
 import userRouter from './resources/user/router.js';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
 
 import { config } from 'dotenv';
 import { validateSessionMiddleware } from './resources/user/middleware.js';
@@ -17,6 +19,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+const swaggerDocument = JSON.parse(
+  fs.readFileSync('./utils/scripts/swagger-output.json')
+);
+
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerDocument));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
