@@ -1,6 +1,6 @@
 import UserModel from './model.js';
 import { generateToken } from '../../utils/auth.js';
-import { userDashboard } from './services.js';
+import { userDashboard, titulosUpload } from './services.js';
 
 export const UserController = {
   create(req, res) {
@@ -9,7 +9,8 @@ export const UserController = {
     user
       .save()
       .then((user) => {
-        res.status(201).json(user);
+        const token = generateToken(user);
+        res.status(201).json(token);
       })
       .catch((err) => {
         console.log(err);
@@ -88,4 +89,10 @@ export const dashboard = async (req, res) => {
   } catch (err) {
     res.status(400).json(err);
   }
+};
+
+export const cargar_titulos = async (req, res) => {
+  try {
+    const date = await titulosUpload(req);
+  } catch (error) {}
 };

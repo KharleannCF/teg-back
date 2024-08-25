@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import { UserController, login, dashboard } from './controller.js';
-import { validateSessionMiddleware } from './middleware.js';
 import {
-  replaceOrUploadFile,
-  upload,
-  uploadFileMiddleware,
-} from '../../utils/uploader.js';
+  UserController,
+  login,
+  dashboard,
+  cargar_titulos,
+} from './controller.js';
+import { validateSessionMiddleware } from './middleware.js';
+import { replaceOrUploadFile, upload } from '../../utils/uploader.js';
 
 const router = Router();
 
@@ -24,6 +25,13 @@ router.post('/login', (req, res) => {
 router.post('/', upload.single('file'), (req, res) => {
   UserController.create(req, res);
 });
+
+router.post(
+  '/titulos',
+  validateSessionMiddleware,
+  upload.array('titulos', 10),
+  cargar_titulos
+);
 
 router.get('/:id', (req, res) => {
   UserController.retrieve(req, res);

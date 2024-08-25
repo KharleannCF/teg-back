@@ -61,7 +61,15 @@ const userSchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ['estudiante', 'docente', 'jubilado'],
+    enum: [
+      'estudiante',
+      'docente',
+      'jubilado',
+      'administrativo',
+      'obrero',
+      'egresado',
+      'empresa',
+    ],
     required: true,
   },
   titulo: [
@@ -72,6 +80,10 @@ const userSchema = new mongoose.Schema({
       foto: { type: String },
     },
   ],
+  empresa: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'empresa', // Nombre del modelo de empresa
+  },
 });
 
 userSchema.pre('save', function (next) {

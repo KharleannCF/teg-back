@@ -169,6 +169,86 @@
         }
       }
     },
+    "/api/user/titulos": {
+      "post": {
+        "summary": "Carga de múltiples títulos para un usuario autenticado",
+        "description": "Permite a un usuario autenticado cargar múltiples títulos a la plataforma.",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "files",
+            "in": "formData",
+            "description": "Archivos de imágenes de los títulos",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "fechas",
+            "in": "formData",
+            "description": "Fechas de graduación, separadas por comas (ej. 2015-06-01,2018-09-15)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "areas",
+            "in": "formData",
+            "description": "Áreas de estudio de los títulos, separadas por comas (ej. Informática,Matemáticas)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "nivel",
+            "in": "formData",
+            "description": "Niveles de los títulos, separados por comas (ej. Licenciatura,Maestría)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Títulos cargados exitosamente",
+            "schema": {
+              "type": "string",
+              "example": "Titulos cargados exitosamente"
+            }
+          },
+          "400": {
+            "description": "Solicitud incorrecta",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Error en los parámetros de entrada"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Error al cargar los títulos"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
     "/api/user/dashboard": {
       "get": {
         "description": "",
@@ -292,6 +372,44 @@
           },
           "400": {
             "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/empresa/": {
+      "post": {
+        "description": "Upload data including a file",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+            {
+              "name": "authorization",
+              "in": "header",
+              "type": "string"
+            },
+          {
+            "name": "rif",
+            "in": "formData",
+            "type": "integer",
+            "example": 1234567890
+          },
+          {
+            "name": "nombre",
+            "in": "formData",
+            "type": "string",
+            "example": "Juan"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

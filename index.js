@@ -8,6 +8,7 @@ import fs from 'fs';
 
 import { config } from 'dotenv';
 import { validateSessionMiddleware } from './resources/user/middleware.js';
+import empresaRouter from './resources/empresa/router.js';
 
 config();
 
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/user', userRouter);
+app.use('/api/empresa', validateSessionMiddleware, empresaRouter);
 
 app.listen(process.env.PORT, async () => {
   await connect();

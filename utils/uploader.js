@@ -31,7 +31,6 @@ export const upload = multer({ storage: storage });
  * @param {Function} next - Express next middleware function
  */
 export function uploadFileMiddleware(req, res, next) {
-  console.log('0000000000000');
   upload.single('file')(req, res, (err) => {
     if (err) {
       return res
