@@ -1,4 +1,6 @@
 import User from './model.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export const userDashboard = async (userID) => {
   try {
@@ -13,7 +15,7 @@ export const userDashboard = async (userID) => {
   }
 };
 
-export const titulosUpload = async ({ files, fechas, areas, nivel }) => {
+export const titulosCarga = async ({ files, fechas, areas, nivel }) => {
   try {
     const user = await User.findById(req.user).lean().exec();
 
@@ -41,6 +43,26 @@ export const titulosUpload = async ({ files, fechas, areas, nivel }) => {
   } catch (err) {
     return err;
   }
+};
+
+export const cambioDeClave = async (token, clave) => {
+  if (!token || !clave) {
+    throw new Error('Clave o usuario no existen');
+  }
+
+  // Verificar el token
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const userId = decoded.id;
+
+  // Buscar al usuario por ID
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error('Usuario no encontrado.');
+  }
+
+  // Actualizar la contraseña del usuario
+  user.clave = nuevaClave;
+  await user.save();
 };
 
 /* titulo: [

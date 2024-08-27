@@ -1,9 +1,7 @@
 import UserModel from '../user/model.js';
 import EmpresaModel from './model.js';
-import { generateToken } from '../../utils/auth.js';
-import { userDashboard, titulosUpload } from './services.js';
 
-export const UserController = {
+export const empresaController = {
   create(req, res) {
     //TODO MONTAR IMAGEN EN HOSTING
     const empresa = new EmpresaModel(req.body);

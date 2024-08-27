@@ -4,6 +4,8 @@ import {
   login,
   dashboard,
   cargar_titulos,
+  olvido_clave,
+  cambiar_clave,
 } from './controller.js';
 import { validateSessionMiddleware } from './middleware.js';
 import { replaceOrUploadFile, upload } from '../../utils/uploader.js';
@@ -22,9 +24,9 @@ router.post('/login', (req, res) => {
   login(req, res);
 });
 
-router.post('/', upload.single('file'), (req, res) => {
-  UserController.create(req, res);
-});
+router.post('/forgot-password', olvido_clave);
+
+router.post('/cambiar-contraseña', cambiar_clave);
 
 router.post(
   '/titulos',
@@ -43,6 +45,10 @@ router.put('/:id', replaceOrUploadFile, (req, res) => {
 
 router.delete('/:id', (req, res) => {
   UserController.destroy(req, res);
+});
+
+router.post('/', upload.single('file'), (req, res) => {
+  UserController.create(req, res);
 });
 
 export default router;
