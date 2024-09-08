@@ -10,6 +10,11 @@ const proyectoSchema = new mongoose.Schema(
     num_participantes: { type: Number, required: true },
     descripcion: { type: String, required: true, maxlength: 200 },
     requisitos: [{ type: String, required: true, maxlength: 200 }],
+    contratacion: {
+      type: String,
+      enum: ['fijo', 'temporal', 'practica', 'medio tiempo', 'por hora'],
+      default: 'fijo',
+    },
     costo: { type: Number },
     lider: { type: String, required: true, maxlength: 100 },
     imagen: { type: String, default: null },
