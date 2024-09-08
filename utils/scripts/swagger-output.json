@@ -367,6 +367,11 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -398,6 +403,11 @@
                 }
               }
             }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -416,6 +426,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
             "type": "string"
           }
         ],
@@ -463,6 +478,294 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/proyecto": {
+      "get": {
+        "parameters":[{
+          "name": "authorization",
+          "in": "header",
+          "type": "string"
+        }],
+        "description": "Obtiene todos los proyectos.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Proyecto"
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      },
+      "post": {
+        "description": "Crea un nuevo proyecto.",
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProyectoInput"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Proyecto creado exitosamente"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      }
+    },
+    "/api/proyecto/{id}": {
+      "get": {
+        "description": "Obtiene un proyecto por su ID.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Proyecto"
+            }
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "404": {
+            "description": "Proyecto no encontrado"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      },
+      "put": {
+        "description": "Actualiza un proyecto existente.",
+        "consumes": ["application/json"],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProyectoInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Proyecto actualizado exitosamente"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "404": {
+            "description": "Proyecto no encontrado"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      },
+      "delete": {
+        "description": "Elimina un proyecto por su ID.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Solicitud incorrecta"
+          },
+          "404": {
+            "description": "Proyecto no encontrado"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      }
+    }
+  },
+  "definitions": {
+    "Proyecto": {
+      "type": "object",
+      "properties": {
+        "titulo": {
+          "type": "string",
+          "example": "Nuevo Proyecto"
+        },
+        "f_publicacion": {
+          "type": "string",
+          "format": "date",
+          "example": "2024-09-01"
+        },
+        "duracion": {
+          "type": "integer",
+          "example": 6
+        },
+        "num_participantes": {
+          "type": "integer",
+          "example": 10
+        },
+        "descripcion": {
+          "type": "string",
+          "example": "Descripción detallada del proyecto."
+        },
+        "requisitos": {
+          "type": "array",
+          "example": ["JavaScript", "Node.js"]
+        },
+        "costo": {
+          "type": "number",
+          "example": 5000
+        },
+        "lider": {
+          "type": "string",
+          "example": "Juan Pérez"
+        },
+        "imagen": {
+          "type": "string",
+          "example": "imagen.jpg"
+        },
+        "estado": {
+          "type": "string",
+          "enum": ["pendiente", "en progreso", "terminado"],
+          "example": "pendiente"
+        },
+        "user": {
+          "type": "string",
+          "example": "60d0fe4f5311236168a109ca"
+        },
+        "participantes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "60d0fe4f5311236168a109ca"
+          }
+        },
+        "candidatos": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "60d0fe4f5311236168a109ca"
+          }
+        }
+      }
+    },
+    "ProyectoInput": {
+      "type": "object",
+      "properties": {
+        "titulo": {
+          "type": "string"
+        },
+        "f_publicacion": {
+          "type": "string",
+          "format": "date"
+        },
+        "duracion": {
+          "type": "integer"
+        },
+        "num_participantes": {
+          "type": "integer"
+        },
+        "descripcion": {
+          "type": "string"
+        },
+        "requisitos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "costo": {
+          "type": "number"
+        },
+        "lider": {
+          "type": "string"
+        },
+        "imagen": {
+          "type": "string"
+        },
+        "estado": {
+          "type": "string",
+          "enum": ["pendiente", "en progreso", "terminado"]
+        },
+        "user": {
+          "type": "string"
+        },
+        "participantes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "candidatos": {
+          "type": "array",
+          "items": {
+            "type": "string"
           }
         }
       }
