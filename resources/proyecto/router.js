@@ -6,6 +6,8 @@ import {
   getProyectoById,
   updateProyecto,
   deleteProyecto,
+  postularCandidato,
+  cambiarEstadoCandidato,
 } from './controller.js';
 
 const router = Router();
@@ -15,6 +17,12 @@ router.post('/', upload.single('foto'), createProyecto);
 
 // Ruta para obtener todos los proyectos
 router.get('/', getProyectos);
+
+// Ruta para postular un candidato a un proyecto
+router.get('/candidato/:id', postularCandidato);
+
+// Ruta para cambiar el estado de un candidato
+router.post('/candidato/:id', cambiarEstadoCandidato);
 
 // Ruta para obtener un proyecto por ID
 router.get('/:id', getProyectoById);

@@ -30,8 +30,15 @@ const proyectoSchema = new mongoose.Schema(
     ],
     candidatos: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user', // Nombre del modelo del usuario
+        userID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'user', // Nombre del modelo del usuario
+        },
+        status: {
+          type: String,
+          enum: ['pendiente', 'aceptado', 'rechazado'],
+          required: true,
+        },
       },
     ],
   },

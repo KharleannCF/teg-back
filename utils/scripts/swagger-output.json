@@ -647,6 +647,94 @@
         },
         "tags": ["Proyectos"]
       }
+    },
+    "/api/proyecto/candidato/{id}": {
+      "get": {
+        "summary": "Postularse como candidato a un proyecto",
+        "description": "Permite a un usuario autenticado postularse como candidato a un proyecto específico.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del proyecto al que el usuario quiere postularse como candidato",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario postulado como candidato exitosamente"
+          },
+          "400": {
+            "description": "El usuario ya está postulado como candidato o hay un error en la solicitud"
+          },
+          "404": {
+            "description": "Proyecto no encontrado"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      },
+      "post": {
+        "summary": "Cambiar estado de un candidato",
+        "description": "Permite al usuario propietario de un proyecto cambiar el estado de un candidato. Si el estado es 'aceptado', el candidato se moverá al arreglo de participantes.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del proyecto",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Datos del candidato",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "candidatoId": {
+                  "type": "string",
+                  "description": "ID del candidato"
+                },
+                "nuevoEstado": {
+                  "type": "string",
+                  "description": "Nuevo estado del candidato",
+                  "enum": ["pendiente", "aceptado", "rechazado"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Estado del candidato actualizado exitosamente"
+          },
+          "403": {
+            "description": "El usuario no tiene permisos para realizar esta acción"
+          },
+          "404": {
+            "description": "Proyecto o candidato no encontrado"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        },
+        "tags": ["Proyectos"]
+      }
     }
   },
   "definitions": {
