@@ -1,5 +1,6 @@
 import Proyecto from './model.js';
 import User from '../user/model.js';
+import Chat from '../chat/model.js';
 import mongoose from 'mongoose';
 
 // Crear un nuevo proyecto
@@ -105,6 +106,13 @@ export const postularCandidato = async (req, res) => {
 
     // Añadir el usuario a la lista de candidatos
     proyecto.candidatos.push({ userID: userId, status: 'pendiente' });
+
+    const chat = new Chat({
+      users: [userId, proyecto.user],
+      proyecto_id: proyecto._id,
+      estado: 'pendiente',
+    });
+
     await proyecto.save();
 
     return res

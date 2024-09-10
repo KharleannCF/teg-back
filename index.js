@@ -12,6 +12,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import empresaRouter from './resources/empresa/router.js';
 import userRouter from './resources/user/router.js';
 import proyectoRouter from './resources/proyecto/router.js';
+import chatRouter from './resources/chat/router.js';
 
 config();
 
@@ -20,19 +21,29 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: '*' } });
 
-// Manejar conexiones de clientes
+// Configuración del socket
 io.on('connection', (socket) => {
-  console.log('Cliente conectado');
+  console.log('Nuevo cliente conectado');
 
-  // Manejar mensajes del cliente
-  socket.on('create-something', (message) => {
-    console.log('Mensaje recibido:', message);
-
-    // Enviar mensaje a todos los clientes, incluido el que envió el mensaje
-    io.emit('message', message);
+  socket.on('joinChat', ({ chatId, userId }) => {
+    socket.join(chatId);
+    console.log(`Usuario ${userId} se unió al chat ${chatId}`);
   });
 
-  // Manejar desconexiones
+  socket.on('sendMessage', async ({ chatId, sender, content }) => {
+    /*  await Chat.findByIdAndUpdate(chatId, {
+      $push: {
+        messages: {
+          sender,
+          content,
+          date: new Date(),
+        },
+      },
+    }); */
+    const message = { sender, content };
+    io.to(chatId).emit('newMessage', message);
+  });
+
   socket.on('disconnect', () => {
     console.log('Cliente desconectado');
   });
@@ -59,6 +70,7 @@ app.get('/', (req, res) => {
 app.use('/api/user', userRouter);
 app.use('/api/empresa', validateSessionMiddleware, empresaRouter);
 app.use('/api/proyectos', validateSessionMiddleware, proyectoRouter);
+app.use('/api/chats', validateSessionMiddleware, chatRouter);
 
 server.listen(process.env.PORT, async () => {
   await connect();
