@@ -9,7 +9,7 @@ export const empresaController = {
       .save()
       .then((empresa) => {
         UserModel.findByIdAndUpdate(req.user, { empresa: empresa._id }).then(
-          (res) => {
+          (_) => {
             return res
               .status(201)
               .json({ message: 'Empresa creada exitosamente' });
