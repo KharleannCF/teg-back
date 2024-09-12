@@ -1,12 +1,53 @@
-Ok, I can help you improve the code in `resources\empresa\controller.js`.
+import UserModel from '../user/model.js';
+import EmpresaModel from './model.js';
 
-Here are some suggestions:
-
-1. **Consistent Error Handling:** The code currently uses `console.log(err)` for error logging, which is not ideal for production environments. It's better to use a dedicated logging library or a centralized error handling mechanism.
-2. **Clearer Response Messages:** The success messages could be more informative. For example, instead of "Empresa creada exitosamente", you could include the created empresa's ID or name.
-3. **Avoid Unnecessary `lean()` Calls:** The `lean()` method is used to return plain JavaScript objects instead of Mongoose documents. While it can be useful in some cases, it's not strictly necessary in this code.
-4. **Use Async/Await for Better Readability:** The code can be made more readable and easier to understand by using `async/await` instead of nested `then` callbacks.
-
-Here's the updated code:
-
-resources\empresa\controller.js
+export const empresaController = {
+  async create(req, res) {
+    try {
+      //TODO MONTAR IMAGEN EN HOSTING
+      const empresa = new EmpresaModel(req.body);
+      const createdEmpresa = await empresa.save();
+      await UserModel.findByIdAndUpdate(req.user, { empresa: createdEmpresa._id });
+      res.status(201).json({ message: 'Empresa creada exitosamente', empresa: createdEmpresa });
+    } catch (err) {
+      console.error(err); // Use a proper logging mechanism in production
+      res.status(400).json(err);
+    }
+  },
+  async list(req, res) {
+    try {
+      const empresas = await EmpresaModel.find({}).exec();
+      res.status(200).json(empresas);
+    } catch (err) {
+      console.error(err);
+      res.status(400).json(err);
+    }
+  },
+  async retrieve(req, res) {
+    try {
+      const empresa = await EmpresaModel.findById(req.params.id).exec();
+      res.status(200).json(empresa);
+    } catch (err) {
+      console.error(err);
+      res.status(400).json(err);
+    }
+  },
+  async update(req, res) {
+    try {
+      const updatedEmpresa = await EmpresaModel.findByIdAndUpdate(req.params.id, req.body, { new: true }).exec();
+      res.status(200).json(updatedEmpresa);
+    } catch (err) {
+      console.error(err);
+      res.status(400).json(err);
+    }
+  },
+  async destroy(req, res) {
+    try {
+      await EmpresaModel.findByIdAndRemove(req.params.id).exec();
+      res.status(204).json({ message: 'Empresa eliminada exitosamente' });
+    } catch (err) {
+      console.error(err);
+      res.status(400).json(err);
+    }
+  },
+};
