@@ -8,7 +8,7 @@ import {
   cambiar_clave,
 } from './controller.js';
 import { validateSessionMiddleware } from './middleware.js';
-import { uploadFileMiddleware, replaceOrUploadFile, upload } from '../../utils/uploader.js';
+import { upload } from '../../utils/uploader.js';
 
 const router = Router();
 
@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
   UserController.retrieve(req, res);
 });
 
-router.put('/:id', replaceOrUploadFile, (req, res) => {
+router.put('/:id', (req, res) => {
   UserController.update(req, res);
 });
 
@@ -47,7 +47,7 @@ router.delete('/:id', (req, res) => {
   UserController.destroy(req, res);
 });
 
-router.post('/', uploadFileMiddleware, (req, res) => {
+router.post('/', upload.single('profileImage'), (req, res) => {
   UserController.create(req, res);
 });
 
