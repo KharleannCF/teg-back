@@ -31,19 +31,20 @@ export const upload = multer({ storage: storage });
  * @param {Function} next - Express next middleware function
  */
 export function uploadFileMiddleware(req, res, next) {
-  upload.single('file')(req, res, (err) => {
+  // Usamos el middleware de Multer para procesar un solo archivo en el campo 'profileImage'
+  upload.single('profileImage')(req, res, (err) => {
     if (err) {
       return res
         .status(500)
         .json({ message: 'File upload failed', error: err });
     }
     if (req.file) {
+      // Si hay un archivo, asignamos la ruta
       req.filePath = path.join('uploads', req.file.filename);
     }
-    next(); // Pass control to the next middleware or route handler, whether or not a file was uploaded
+    next(); // Pasamos al siguiente middleware
   });
 }
-
 /**
  * Middleware to replace an existing file with a new one, or upload it if it doesn't exist.
  * @param {Object} req - Express request object
