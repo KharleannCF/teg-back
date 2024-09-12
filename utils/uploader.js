@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
-const uploadDir = path.join(__dirname, '..', 'uploads');
+const uploadDir = path.join(path.dirname(import.meta.url), '..', 'uploads');
 
 // Create the uploads directory if it doesn't exist
 if (!fs.existsSync(uploadDir)) {
