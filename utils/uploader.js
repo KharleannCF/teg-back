@@ -3,16 +3,15 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
-const uploadDir = path.join(path.dirname(import.meta.url), '..', 'uploads');
-
-// Create the uploads directory if it doesn't exist
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
+const uploadDir = path.join(path.dirname('./'), 'uploads');
 
 // Set up Multer storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    // Crear el directorio dinámicamente si no existe
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true }); // El flag `recursive: true` asegura que todos los directorios intermedios se creen si es necesario
+    }
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
@@ -45,6 +44,7 @@ export function uploadFileMiddleware(req, res, next) {
     next(); // Pasamos al siguiente middleware
   });
 }
+
 /**
  * Middleware to replace an existing file with a new one, or upload it if it doesn't exist.
  * @param {Object} req - Express request object

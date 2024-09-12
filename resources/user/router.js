@@ -8,7 +8,7 @@ import {
   cambiar_clave,
 } from './controller.js';
 import { validateSessionMiddleware } from './middleware.js';
-import { upload } from '../../utils/uploader.js';
+import { upload, uploadFileMiddleware } from '../../utils/uploader.js';
 
 const router = Router();
 
@@ -47,7 +47,7 @@ router.delete('/:id', (req, res) => {
   UserController.destroy(req, res);
 });
 
-router.post('/', upload.single('profileImage'), (req, res) => {
+router.post('/', uploadFileMiddleware, (req, res) => {
   UserController.create(req, res);
 });
 

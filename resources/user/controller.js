@@ -7,7 +7,7 @@ const mailgun = new Mailgun(formData);
 
 export const UserController = {
   create(req, res) {
-    console.log(req.file);
+    req.body.foto = req?.file ? req?.file?.path : null;
     const user = new UserModel(req.body);
     user
       .save()
