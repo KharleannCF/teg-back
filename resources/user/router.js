@@ -47,7 +47,7 @@ router.delete('/:id', (req, res) => {
   UserController.destroy(req, res);
 });
 
-router.post('/', upload.single('file'), (req, res) => {
+router.post('/', upload.single('profileImage'), (req, res) => {
   UserController.create(req, res);
 });
 
