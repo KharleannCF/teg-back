@@ -26,7 +26,7 @@ router.post('/login', (req, res) => {
 
 router.post('/forgot-password', olvido_clave);
 
-router.post('/cambiar-contraseña', cambiar_clave);
+router.post('/cambiar_clave', cambiar_clave);
 
 router.post(
   '/titulos',

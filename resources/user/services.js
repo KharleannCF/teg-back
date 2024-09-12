@@ -61,7 +61,7 @@ export const cambioDeClave = async (token, clave) => {
   }
 
   // Actualizar la contraseña del usuario
-  user.clave = nuevaClave;
+  user.clave = clave;
   await user.save();
 };
 

@@ -117,7 +117,9 @@ export const olvido_clave = async (req, res) => {
         <p>Hemos recibido una solicitud para cambiar la contraseña de tu cuenta.</p>
         <p>Si no solicitaste un cambio de contraseña, por favor ignora este correo.</p>
         <p>Haz clic en el enlace de abajo para cambiar tu contraseña:</p>
-        <a href="https://${process.env.URL_LINK}/cambiar-contraseña?token=${token}">Cambiar mi contraseña</a>
+        <a href="http://${process.env.URL_LINK}/recuperarClave?token=${token}">Cambiar mi contraseña</a>
+        <p>Si el enlace no funciona, copia y pega la siguiente URL en tu navegador:</p>
+        <p>http://${process.env.URL_LINK}/recuperarClave?token=${token}</p>
       `,
     };
     // Enviar el correo electrónico usando Mailgun
