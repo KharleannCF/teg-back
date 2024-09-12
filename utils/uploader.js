@@ -31,14 +31,14 @@ export const upload = multer({ storage: storage });
  * @param {Function} next - Express next middleware function
  */
 export function uploadFileMiddleware(req, res, next) {
-  upload.array('file')(req, res, (err) => {
+  upload.single('file')(req, res, (err) => {
     if (err) {
       return res
         .status(500)
         .json({ message: 'File upload failed', error: err });
     }
-    if (req.files) {
-      req.filePaths = req.files.map((file) => path.join('uploads', file.filename));
+    if (req.file) {
+      req.filePath = path.join('uploads', req.file.filename);
     }
     next(); // Pass control to the next middleware or route handler, whether or not a file was uploaded
   });
