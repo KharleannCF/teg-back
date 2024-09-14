@@ -4,19 +4,16 @@ import EmpresaModel from './model.js';
 export const empresaController = {
   async create(req, res) {
     try {
-      //TODO MONTAR IMAGEN EN HOSTING
       const empresa = new EmpresaModel(req.body);
       empresa.logo = req?.file ? req?.file?.path : null;
       const createdEmpresa = await empresa.save();
       await UserModel.findByIdAndUpdate(req.user, {
         empresa: createdEmpresa._id,
       });
-      res
-        .status(201)
-        .json({
-          message: 'Empresa creada exitosamente',
-          empresa: createdEmpresa,
-        });
+      res.status(201).json({
+        message: 'Empresa creada exitosamente',
+        empresa: createdEmpresa,
+      });
     } catch (err) {
       console.error(err); // Use a proper logging mechanism in production
       res.status(400).json(err);
@@ -42,6 +39,11 @@ export const empresaController = {
   },
   async update(req, res) {
     try {
+      if (req?.file) {
+        req.body.logo = req?.file?.path;
+      } else {
+        delete req.body.logo;
+      }
       const updatedEmpresa = await EmpresaModel.findByIdAndUpdate(
         req.params.id,
         req.body,

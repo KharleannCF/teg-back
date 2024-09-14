@@ -49,11 +49,13 @@ const userSchema = new mongoose.Schema({
     //required: true,
     maxlength: 100,
   },
-  habilidades: {
-    type: String,
-    required: true,
-    maxlength: 200,
-  },
+  habilidades: [
+    {
+      type: String,
+      required: true,
+      maxlength: 200,
+    },
+  ],
   foto: {
     type: String,
     default: null,

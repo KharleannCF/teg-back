@@ -19,6 +19,14 @@ const empresaSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    web: {
+      type: String,
+      default: null,
+    },
+    direccion: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

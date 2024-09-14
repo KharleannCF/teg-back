@@ -1,6 +1,11 @@
 import UserModel from './model.js';
 import { generateToken } from '../../utils/auth.js';
-import { userDashboard, titulosCarga, cambioDeClave } from './services.js';
+import {
+  userDashboard,
+  titulosCarga,
+  cambioDeClave,
+  titulosBorrar,
+} from './services.js';
 import Mailgun from 'mailgun.js';
 import formData from 'form-data';
 const mailgun = new Mailgun(formData);
@@ -8,6 +13,9 @@ const mailgun = new Mailgun(formData);
 export const UserController = {
   create(req, res) {
     req.body.foto = req?.file ? req?.file?.path : null;
+    req.body.habilidades = req.body.habilidades
+      ? req.body.habilidades.split(',')
+      : [];
     const user = new UserModel(req.body);
     user
       .save()
@@ -33,6 +41,7 @@ export const UserController = {
   },
   retrieve(req, res) {
     UserModel.findById(req.params.id)
+      .populate('empresa')
       .lean()
       .exec()
       .then((user) => {
@@ -43,6 +52,11 @@ export const UserController = {
       });
   },
   update(req, res) {
+    if (req.user !== req.params.id) {
+      return res
+        .status(401)
+        .json({ message: 'No tienes permiso para realizar esta acción.' });
+    }
     UserModel.findByIdAndUpdate(req.params.id, req.body, { new: true })
       .lean()
       .exec()
@@ -64,6 +78,35 @@ export const UserController = {
         res.status(400).json(err);
       });
   },
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user)
+      .populate('empresa')
+      .select('-clave')
+      .lean()
+      .exec();
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+
+export const updateMe = async (req, res) => {
+  if (req.file) {
+    req.body.foto = req.file.path;
+  }
+  console.log(req.body, req.user);
+  UserModel.findByIdAndUpdate(req.user, req.body, { new: true })
+    .lean()
+    .exec()
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      res.status(400).json(err);
+    });
 };
 
 export const login = async (req, res) => {
@@ -100,6 +143,16 @@ export const cargar_titulos = async (req, res) => {
     res.status(201).json(date);
   } catch (error) {
     console.error('Error en cargarTitulos:', error);
+    return res.status(error.statusCode || 400).json({ message: error });
+  }
+};
+
+export const borrar_titulos = async (req, res) => {
+  try {
+    const date = await titulosBorrar(req);
+    res.status(201).json(date);
+  } catch (error) {
+    console.error('Error en borrar los títulos:', error);
     return res.status(error.statusCode || 400).json({ message: error });
   }
 };

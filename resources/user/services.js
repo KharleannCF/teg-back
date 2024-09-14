@@ -1,6 +1,6 @@
 import User from './model.js';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import fs from 'fs';
 
 export const userDashboard = async (userID) => {
   try {
@@ -16,8 +16,14 @@ export const userDashboard = async (userID) => {
 };
 
 export const titulosCarga = async (req) => {
-  const { dates, areas, levels } = req.body;
-  const { files } = req;
+  let { dates, areas, levels } = req.body;
+  let { files } = req;
+
+  dates = Array.isArray(dates) ? dates : [dates];
+  areas = Array.isArray(areas) ? areas : [areas];
+  levels = Array.isArray(levels) ? levels : [levels];
+  files = Array.isArray(files) ? files : [files];
+
   try {
     const user = await User.findById(req.user).exec();
 
@@ -41,6 +47,30 @@ export const titulosCarga = async (req) => {
     await user.save();
 
     return 'Titulos cargados exitosamente';
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const titulosBorrar = async (req) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(req.user).exec();
+
+    for (let i = 0; i < user.titulos.length; i++) {
+      if (user.titulos[i]._id == id) {
+        if (fs.existsSync(user.titulos[i].foto)) {
+          fs.unlinkSync(user.titulos[i].foto);
+        }
+        user.titulos.splice(i, 1);
+        break;
+      }
+    }
+    delete user.clave;
+    await user.save();
+
+    return 'Titulos eliminado exitosamente';
   } catch (err) {
     throw err;
   }

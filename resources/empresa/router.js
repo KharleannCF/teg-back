@@ -8,4 +8,8 @@ router.post('/', upload.single('logo'), (req, res) => {
   empresaController.create(req, res);
 });
 
+router.put('/:id', upload.single('logo'), (req, res) => {
+  empresaController.update(req, res);
+});
+
 export default router;
