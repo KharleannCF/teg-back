@@ -15,7 +15,7 @@ const empresaSchema = new mongoose.Schema(
       maxlength: 100,
     },
 
-    foto: {
+    logo: {
       type: String,
       default: null,
     },

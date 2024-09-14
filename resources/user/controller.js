@@ -97,7 +97,11 @@ export const dashboard = async (req, res) => {
 export const cargar_titulos = async (req, res) => {
   try {
     const date = await titulosCarga(req);
-  } catch (error) {}
+    res.status(201).json(date);
+  } catch (error) {
+    console.error('Error en cargarTitulos:', error);
+    return res.status(error.statusCode || 400).json({ message: error });
+  }
 };
 
 export const olvido_clave = async (req, res) => {

@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
-const uploadDir = path.join(path.dirname('./'), 'uploads');
+const uploadDir = path.join(path.dirname('./'), 'public', 'uploads');
 
 // Set up Multer storage configuration
 const storage = multer.diskStorage({

@@ -35,7 +35,6 @@ const userSchema = new mongoose.Schema({
   clave: {
     type: String,
     required: true,
-    maxlength: 20,
   },
   telefono: {
     type: Number,
@@ -72,7 +71,7 @@ const userSchema = new mongoose.Schema({
     ],
     required: true,
   },
-  titulo: [
+  titulos: [
     {
       f_graduacion: { type: Date, required: true },
       nivel: { type: String, maxlength: 100 },

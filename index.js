@@ -4,6 +4,7 @@ import cors from 'cors';
 import { connect } from './utils/db.js';
 import swaggerUi from 'swagger-ui-express';
 import fs from 'fs';
+import path from 'path';
 
 import { config } from 'dotenv';
 import { validateSessionMiddleware } from './resources/user/middleware.js';
@@ -14,7 +15,10 @@ import userRouter from './resources/user/router.js';
 import proyectoRouter from './resources/proyecto/router.js';
 import chatRouter from './resources/chat/router.js';
 import Chat from './resources/chat/model.js';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 config();
 
 const app = express();
@@ -95,6 +99,8 @@ app.use(morgan('dev'));
 const swaggerDocument = JSON.parse(
   fs.readFileSync('./utils/scripts/swagger-output.json')
 );
+
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerDocument));

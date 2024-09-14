@@ -15,33 +15,34 @@ export const userDashboard = async (userID) => {
   }
 };
 
-export const titulosCarga = async ({ files, fechas, areas, nivel }) => {
+export const titulosCarga = async (req) => {
+  const { dates, areas, levels } = req.body;
+  const { files } = req;
   try {
-    const user = await User.findById(req.user).lean().exec();
+    const user = await User.findById(req.user).exec();
 
-    const fechas_arr = fechas.split(',');
-    const areas_arr = areas.split(',');
-    const nivel_arr = nivel.split(',');
+    const dates_arr = dates;
+    const areas_arr = areas;
+    const level_arr = levels;
     const titulos = [];
 
-    for (const i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length; i++) {
       //Upload file somewhere
-      //TODO: MONTAR ARCHIVO EN ALGUN HOSTING
-      const foto = files[i].name;
+      const foto = files[i].path;
       titulos.push({
-        f_graduacion: fechas_arr[i],
-        nivel: nivel_arr[i],
+        f_graduacion: dates_arr[i],
+        nivel: level_arr[i],
         area: areas_arr[i],
         foto: foto,
       });
     }
-
-    user.titulo = user.titulo ? user.titulo.concat(titulos) : titulos;
+    user.titulos = user.titulos ? user.titulos.concat(titulos) : titulos;
+    delete user.clave;
     await user.save();
 
     return 'Titulos cargados exitosamente';
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
@@ -64,12 +65,3 @@ export const cambioDeClave = async (token, clave) => {
   user.clave = clave;
   await user.save();
 };
-
-/* titulo: [
-    {
-      f_graduacion: { type: Date, required: true },
-      nivel: { type: String, maxlength: 100 },
-      area: { type: String, maxlength: 50 },
-      foto: { type: String },
-    },
-  ], */

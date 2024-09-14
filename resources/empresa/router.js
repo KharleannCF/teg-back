@@ -4,7 +4,7 @@ import { upload } from '../../utils/uploader.js';
 
 const router = Router();
 
-router.post('/', upload.single('file'), (req, res) => {
+router.post('/', upload.single('logo'), (req, res) => {
   empresaController.create(req, res);
 });
 
