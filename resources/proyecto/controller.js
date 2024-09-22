@@ -39,19 +39,21 @@ export const getProyectoById = async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(id).populate(
       'user participantes candidatos'
-    );
+    ).lean().exec();
     if (!proyecto) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
-    proyecto.isOwner = proyecto.user._id === req.user;
-    proyecto.isCandidate = !!proyecto.candidatos.find(
-      (elem) => elem._id === req.user
+    const isOwner = proyecto?.user?._id.toString() === req?.user.toString();
+    console.log(req.user)
+    const isCandidate = !!proyecto?.candidatos?.find(
+      (elem) => elem._id.toString() === req.user.toString()
     );
-    proyecto.isParticipant = !!proyecto.participantes.find(
-      (elem) => elem._id === req.user
+    const isParticipant = !!proyecto?.participantes?.find(
+      (elem) => elem._id.toString() === req.user.toString()
     );
-    res.status(200).json(proyecto);
+    res.status(200).json({...proyecto, isOwner, isCandidate, isParticipant});
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Error al obtener el proyecto', error });
   }
 };
