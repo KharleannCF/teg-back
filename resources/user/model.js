@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     maxlength: 100,
+    unique: true,
   },
   clave: {
     type: String,

@@ -11,11 +11,14 @@ import formData from 'form-data';
 const mailgun = new Mailgun(formData);
 
 export const UserController = {
-  create(req, res) {
+  async create(req, res) {
     req.body.foto = req?.file ? req?.file?.path : null;
     req.body.habilidades = req.body.habilidades
       ? req.body.habilidades.split(',')
       : [];
+
+    const userFind = await UserModel.find({});
+
     const user = new UserModel(req.body);
     user
       .save()
@@ -87,6 +90,8 @@ export const getMe = async (req, res) => {
       .select('-clave')
       .lean()
       .exec();
+
+    console.log(user);
     res.status(200).json(user);
   } catch (err) {
     res.status(400).json(err);
@@ -112,7 +117,8 @@ export const updateMe = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await UserModel.findOne({ email }).exec();
+    const user = await UserModel.findOne({ correo: email }).exec();
+    console.log(user);
     if (!user) {
       return res.status(401).send({ error: 'Invalid email or password' });
     }
@@ -120,6 +126,7 @@ export const login = async (req, res) => {
     if (!same) {
       return res.status(401).send({ error: 'Invalid email or password' });
     }
+    console.log(user);
     const token = generateToken(user);
     res.send({ token });
   } catch (err) {
