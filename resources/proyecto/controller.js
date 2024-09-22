@@ -41,6 +41,7 @@ export const getProyectoById = async (req, res) => {
     if (!proyecto) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
+    proyecto.isOwner = proyecto.user._id === req.user;
     res.status(200).json(proyecto);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el proyecto', error });

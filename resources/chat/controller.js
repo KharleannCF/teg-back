@@ -6,9 +6,11 @@ import Proyecto from '../proyecto/model.js';
 export const getChats = async (req, res) => {
   try {
     const chats = await Chat.find({ users: req.user })
+      .sort('-updatedAt')
       .populate('users')
       .lean()
       .exec();
+
     chats.forEach((elem) => {
       elem.users = elem.users.filter((subElem) => {
         return subElem._id.toString() !== req.user.toString();

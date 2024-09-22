@@ -47,7 +47,6 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async ({ chatId, sender, content }) => {
     // Validación básica
-    console.log('Mensaje recibido:', { chatId, sender, content });
     try {
       if (!chatId || !sender || !content) {
         console.error('Error: Datos faltantes en el envío del mensaje');
@@ -84,12 +83,11 @@ io.on('connection', (socket) => {
         texto: message.content,
         usuario_id: message.sender,
         leido: false,
+        chatId,
       });
 
       // Emitir una notificación al otro usuario
       const userId = chat.users.find((user) => user !== sender);
-
-      io.to(userId).emit('notification', { chatId });
     } catch (error) {
       console.error('Error al enviar el mensaje:', error);
       socket.emit(
@@ -97,10 +95,6 @@ io.on('connection', (socket) => {
         'Hubo un problema al enviar el mensaje. Por favor, inténtalo de nuevo.'
       );
     }
-  });
-
-  socket.on('notification', ({ userId }) => {
-    console.log('Notificación para el usuario:', userId);
   });
 
   socket.on('disconnect', () => {
