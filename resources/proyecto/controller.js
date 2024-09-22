@@ -2,6 +2,7 @@ import Proyecto from './model.js';
 import User from '../user/model.js';
 import Chat from '../chat/model.js';
 import mongoose from 'mongoose';
+import e from 'express';
 
 // Crear un nuevo proyecto
 export const createProyecto = async (req, res) => {
@@ -42,6 +43,12 @@ export const getProyectoById = async (req, res) => {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
     proyecto.isOwner = proyecto.user._id === req.user;
+    proyecto.isCandidate = !!proyecto.candidatos.find(
+      (elem) => elem._id === req.user
+    );
+    proyecto.isParticipant = !!proyecto.participantes.find(
+      (elem) => elem._id === req.user
+    );
     res.status(200).json(proyecto);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener el proyecto', error });
