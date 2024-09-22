@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 // Crear un nuevo proyecto
 export const createProyecto = async (req, res) => {
   try {
+    req.body.user = req.user;
     const proyecto = new Proyecto(req.body);
     const savedProyecto = await proyecto.save();
     res.status(201).json(savedProyecto);

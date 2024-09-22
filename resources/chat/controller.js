@@ -15,7 +15,7 @@ export const getChats = async (req, res) => {
       });
     });
 
-    res.status(200).json(chats);
+    res.status(200).json({ chats, userID: req.user });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Error al obtener los chats', error });

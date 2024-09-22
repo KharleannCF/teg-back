@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { text } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import { connect } from './utils/db.js';
@@ -47,16 +47,17 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async ({ chatId, sender, content }) => {
     // Validación básica
-    if (!chatId || !sender || !content) {
-      console.error('Error: Datos faltantes en el envío del mensaje');
-      socket.emit(
-        'error',
-        'chatId, sender y content son requeridos para enviar un mensaje.'
-      );
-      return;
-    }
-
+    console.log('Mensaje recibido:', { chatId, sender, content });
     try {
+      if (!chatId || !sender || !content) {
+        console.error('Error: Datos faltantes en el envío del mensaje');
+        socket.emit(
+          'error',
+          'chatId, sender y content son requeridos para enviar un mensaje.'
+        );
+        return;
+      }
+
       const chat = await Chat.findById(chatId);
 
       if (!chat) {
@@ -69,12 +70,26 @@ io.on('connection', (socket) => {
       const message = { sender, content, date: new Date() };
       await Chat.findByIdAndUpdate(chatId, {
         $push: {
-          messages: message,
+          mensajes: {
+            fecha: message.date,
+            texto: message.content,
+            usuario_id: message.sender,
+          },
         },
       });
 
       // Emitir el mensaje a la sala
-      io.to(chatId).emit('newMessage', message);
+      io.to(chatId).emit('newMessage', {
+        fecha: message.date,
+        texto: message.content,
+        usuario_id: message.sender,
+        leido: false,
+      });
+
+      // Emitir una notificación al otro usuario
+      const userId = chat.users.find((user) => user !== sender);
+
+      io.to(userId).emit('notification', { chatId });
     } catch (error) {
       console.error('Error al enviar el mensaje:', error);
       socket.emit(
@@ -82,6 +97,10 @@ io.on('connection', (socket) => {
         'Hubo un problema al enviar el mensaje. Por favor, inténtalo de nuevo.'
       );
     }
+  });
+
+  socket.on('notification', ({ userId }) => {
+    console.log('Notificación para el usuario:', userId);
   });
 
   socket.on('disconnect', () => {
