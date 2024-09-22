@@ -8,6 +8,7 @@ import e from 'express';
 export const createProyecto = async (req, res) => {
   try {
     req.body.user = req.user;
+    req.body.requisitos = req.body.requisitos.split(',');
     const proyecto = new Proyecto(req.body);
     const savedProyecto = await proyecto.save();
     res.status(201).json(savedProyecto);
