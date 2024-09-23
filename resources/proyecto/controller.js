@@ -37,23 +37,23 @@ export const getProyectoById = async (req, res) => {
   }
 
   try {
-    const proyecto = await Proyecto.findById(id).populate(
-      'user participantes candidatos'
-    ).lean().exec();
+    const proyecto = await Proyecto.findById(id)
+      .populate('user participantes candidatos')
+      .lean()
+      .exec();
     if (!proyecto) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
     const isOwner = proyecto?.user?._id.toString() === req?.user.toString();
-    console.log(req.user)
     const isCandidate = !!proyecto?.candidatos?.find(
       (elem) => elem._id.toString() === req.user.toString()
     );
     const isParticipant = !!proyecto?.participantes?.find(
       (elem) => elem._id.toString() === req.user.toString()
     );
-    res.status(200).json({...proyecto, isOwner, isCandidate, isParticipant});
+    res.status(200).json({ ...proyecto, isOwner, isCandidate, isParticipant });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: 'Error al obtener el proyecto', error });
   }
 };
@@ -86,7 +86,10 @@ export const deleteProyecto = async (req, res) => {
   }
 
   try {
-    const deletedProyecto = await Proyecto.findByIdAndDelete(id);
+    const deletedProyecto = await Proyecto.findOneAndDelete({
+      _id: id,
+      user: req.user,
+    });
     if (!deletedProyecto) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
