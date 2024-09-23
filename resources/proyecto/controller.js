@@ -102,7 +102,7 @@ export const deleteProyecto = async (req, res) => {
 export const postularCandidato = async (req, res) => {
   try {
     const { id } = req.params; // ID del proyecto desde la ruta
-    const userId = req.user._id; // ID del usuario autenticado desde req.user
+    const userId = req.user; // ID del usuario autenticado desde req.user
 
     // Buscar el proyecto por ID
     const proyecto = await Proyecto.findById(id);
@@ -127,6 +127,8 @@ export const postularCandidato = async (req, res) => {
       proyecto_id: proyecto._id,
       estado: 'pendiente',
     });
+
+    await chat.save();
 
     await proyecto.save();
 
@@ -154,7 +156,7 @@ export const cambiarEstadoCandidato = async (req, res) => {
     }
 
     // Verificar que el usuario que solicita la operación es el propietario del proyecto
-    if (proyecto.user.toString() !== req.user._id.toString()) {
+    if (proyecto.user.toString() !== req.user.toString()) {
       return res
         .status(403)
         .json({ message: 'No tienes permisos para realizar esta acción' });
@@ -184,6 +186,11 @@ export const cambiarEstadoCandidato = async (req, res) => {
         proyecto.participantes.push(candidatoId);
       }
     }
+
+    await Chat.findOneAndDelete({
+      users: [candidatoId, req.user],
+      proyecto_id: proyecto._id,
+    });
 
     // Guardar los cambios en el proyecto
     await proyecto.save();

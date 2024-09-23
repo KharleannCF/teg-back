@@ -7,7 +7,7 @@ export const getChats = async (req, res) => {
   try {
     const chats = await Chat.find({ users: req.user })
       .sort('-updatedAt')
-      .populate('users')
+      .populate('users proyecto_id')
       .lean()
       .exec();
 
