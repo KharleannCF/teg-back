@@ -61,6 +61,7 @@ export const getProyectoById = async (req, res) => {
 // Actualizar un proyecto
 export const updateProyecto = async (req, res) => {
   const { id } = req.params;
+  req.body.requisitos = req.body.requisitos.split(',');
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'ID de proyecto inválido' });
   }
@@ -201,5 +202,34 @@ export const cambiarEstadoCandidato = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
+export const searchProyectos = async (req, res) => {
+  const { search } = req.body; // Assuming search term comes from the request body
+
+  try {
+    // Construct a case-insensitive search for `titulo`, `requisitos`, and `contratacion`
+    const searchQuery = {
+      $or: [
+        { titulo: { $regex: search, $options: 'i' } }, // Search in 'titulo'
+        { requisitos: { $regex: search, $options: 'i' } }, // Search in 'requisitos'
+        { contratacion: { $regex: search, $options: 'i' } }, // Search in 'contratacion'
+        { descripcion: { $regex: search, $options: 'i' } }, // Search in 'descripcion'
+      ],
+    };
+
+    // Perform the search and sort results with 'terminado' projects at the end
+    const proyectos = await Proyecto.find(searchQuery)
+      .sort({
+        estado: 1, // Sort by estado, where 'terminado' (as it's the highest value) goes at the end
+      })
+      .exec();
+
+    // Return the filtered and sorted projects
+    res.status(200).json(proyectos);
+  } catch (error) {
+    console.error('Error searching projects:', error);
+    res.status(500).json({ message: 'Server error while searching projects' });
   }
 };

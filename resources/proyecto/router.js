@@ -8,6 +8,7 @@ import {
   deleteProyecto,
   postularCandidato,
   cambiarEstadoCandidato,
+  searchProyectos,
 } from './controller.js';
 
 const router = Router();
@@ -23,6 +24,9 @@ router.get('/candidato/:id', postularCandidato);
 
 // Ruta para cambiar el estado de un candidato
 router.post('/candidato/:id', cambiarEstadoCandidato);
+
+// Ruta para realizar una busqueda genereal
+router.post('/search', searchProyectos);
 
 // Ruta para obtener un proyecto por ID
 router.get('/:id', getProyectoById);
