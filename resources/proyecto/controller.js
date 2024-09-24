@@ -66,6 +66,7 @@ export const updateProyecto = async (req, res) => {
   }
 
   try {
+    req.body.requisitos = req.body.requisitos.split(',');
     const updatedProyecto = await Proyecto.findByIdAndUpdate(id, req.body, {
       new: true,
     }).populate('user participantes candidatos');
