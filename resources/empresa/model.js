@@ -5,7 +5,7 @@ mongoose.set('strictQuery', true);
 const empresaSchema = new mongoose.Schema(
   {
     rif: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
     },

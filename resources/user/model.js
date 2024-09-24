@@ -5,7 +5,7 @@ mongoose.set('strictQuery', true);
 
 const userSchema = new mongoose.Schema({
   cedula: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   },
