@@ -115,10 +115,11 @@ export const postularCandidato = async (req, res) => {
     if (!proyecto) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
-
+    console.log(proyecto.candidatos, userId);
     // Verificar si el usuario ya está postulado como candidato
     if (
-      proyecto.candidatos.filter((elem) => elem.userID === userId).length > 0
+      proyecto.candidatos.filter((elem) => elem.userID.toString() === userId)
+        .length > 0
     ) {
       return res
         .status(400)
