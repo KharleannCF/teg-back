@@ -23,7 +23,12 @@ export const getProyectos = async (req, res) => {
   try {
     let proyectos = await Proyecto.find().populate(
       'user participantes candidatos'
-    );
+    ).lean().exec();
+
+    proyectos = proyectos.map(elem=>{
+      elem.isOwner = elem.user._id = req.user
+      return elem
+    })
 
     
     res.status(200).json(proyectos);
