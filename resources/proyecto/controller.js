@@ -28,6 +28,12 @@ export const getProyectos = async (req, res) => {
 
 		proyectos = proyectos.map((elem) => {
 			elem.isOwner = elem.user._id.toString() === req.user;
+			elem.isCandidate = elem.candidatos.find(
+				(subElem) => subElem._id.toString() === req.user
+			);
+			elem.isPart = elem.participantes.find(
+				(subElem) => subElem._id.toString() === req.user
+			);
 			return elem;
 		});
 
@@ -146,11 +152,9 @@ export const postularCandidato = async (req, res) => {
 				(elem) => elem.userID.toString() === userId
 			).length > 0
 		) {
-			return res
-				.status(400)
-				.json({
-					message: "El usuario ya está postulado como candidato",
-				});
+			return res.status(400).json({
+				message: "El usuario ya está postulado como candidato",
+			});
 		}
 
 		// Añadir el usuario a la lista de candidatos
@@ -191,11 +195,9 @@ export const cambiarEstadoCandidato = async (req, res) => {
 
 		// Verificar que el usuario que solicita la operación es el propietario del proyecto
 		if (proyecto.user.toString() !== req.user.toString()) {
-			return res
-				.status(403)
-				.json({
-					message: "No tienes permisos para realizar esta acción",
-				});
+			return res.status(403).json({
+				message: "No tienes permisos para realizar esta acción",
+			});
 		}
 
 		// Buscar al candidato en la lista de candidatos del proyecto
