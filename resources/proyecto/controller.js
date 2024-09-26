@@ -9,6 +9,7 @@ export const createProyecto = async (req, res) => {
   try {
     req.body.user = req.user;
     req.body.requisitos = req.body.requisitos.split(',');
+    req.body.imagen = req.file.path;
     const proyecto = new Proyecto(req.body);
     const savedProyecto = await proyecto.save();
     res.status(201).json(savedProyecto);
@@ -62,12 +63,14 @@ export const getProyectoById = async (req, res) => {
 export const updateProyecto = async (req, res) => {
   const { id } = req.params;
   req.body.requisitos = req.body.requisitos.split(',');
+  if (req.file) {
+    req.body.imagen = req.file.path;
+  }
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'ID de proyecto inválido' });
   }
 
   try {
-    req.body.requisitos = req.body.requisitos.split(',');
     const updatedProyecto = await Proyecto.findByIdAndUpdate(id, req.body, {
       new: true,
     }).populate('user participantes candidatos');
@@ -76,6 +79,7 @@ export const updateProyecto = async (req, res) => {
     }
     res.status(200).json(updatedProyecto);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Error al actualizar el proyecto', error });
   }
 };
