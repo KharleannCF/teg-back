@@ -26,7 +26,7 @@ export const getProyectos = async (req, res) => {
     ).lean().exec();
 
     proyectos = proyectos.map(elem=>{
-      elem.isOwner = elem.user._id = req.user
+      elem.isOwner = elem.user._id.toString() === req.user
       return elem
     })
 
