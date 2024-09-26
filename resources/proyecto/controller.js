@@ -21,9 +21,14 @@ export const createProyecto = async (req, res) => {
 // Obtener todos los proyectos
 export const getProyectos = async (req, res) => {
   try {
-    const proyectos = await Proyecto.find().populate(
+    let proyectos = await Proyecto.find().populate(
       'user participantes candidatos'
     );
+    proyectos = proyectos.map(elem=>({
+      ...elem, isOwner: elem.user._id.toString() === req.user
+    }))
+
+    
     res.status(200).json(proyectos);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los proyectos', error });
