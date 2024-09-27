@@ -28,10 +28,10 @@ export const getProyectos = async (req, res) => {
 
 		proyectos = proyectos.map((elem) => {
 			elem.isOwner = elem.user._id.toString() === req.user;
-			elem.isCandidate = !!elem.candidatos.find(
-				(subElem) => subElem._id.toString() === req.user
+			elem.isCandidate = elem.candidatos.some(
+				(subElem) => subElem.userID.toString() === req.user
 			);
-			elem.isPart = !!elem.participantes.find(
+			elem.isPart = elem.participantes.some(
 				(subElem) => subElem._id.toString() === req.user
 			);
       console.log(elem);
