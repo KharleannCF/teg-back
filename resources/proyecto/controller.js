@@ -34,6 +34,7 @@ export const getProyectos = async (req, res) => {
 			elem.isPart = !!elem.participantes.find(
 				(subElem) => subElem._id.toString() === req.user
 			);
+      console.log(elem);
 			return elem;
 		});
 
