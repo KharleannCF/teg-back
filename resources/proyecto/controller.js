@@ -14,6 +14,7 @@ export const createProyecto = async (req, res) => {
     const savedProyecto = await proyecto.save();
     res.status(201).json(savedProyecto);
   } catch (error) {
+	console.log(error)
     res.status(500).json({ message: 'Error al crear el proyecto', error });
   }
 };
