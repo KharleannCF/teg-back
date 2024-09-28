@@ -9,7 +9,7 @@ export const createProyecto = async (req, res) => {
   try {
     req.body.user = req.user;
     req.body.requisitos = req.body.requisitos.split(',');
-    req.body.imagen = req.file.path;
+    if(req.file)req.body.imagen = req.file.path;
     const proyecto = new Proyecto(req.body);
     const savedProyecto = await proyecto.save();
     res.status(201).json(savedProyecto);
