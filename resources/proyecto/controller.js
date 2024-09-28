@@ -9,11 +9,13 @@ export const createProyecto = async (req, res) => {
   try {
     req.body.user = req.user;
     req.body.requisitos = req.body.requisitos.split(',');
-    req.body.imagen = req.file.path;
+    //optional path
+	if(req.file)req.body.imagen = req.file.path;
     const proyecto = new Proyecto(req.body);
     const savedProyecto = await proyecto.save();
     res.status(201).json(savedProyecto);
   } catch (error) {
+	console.log(error)
     res.status(500).json({ message: 'Error al crear el proyecto', error });
   }
 };
