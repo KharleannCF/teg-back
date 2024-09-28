@@ -5,7 +5,7 @@ mongoose.set('strictQuery', true);
 const proyectoSchema = new mongoose.Schema(
   {
     titulo: { type: String, required: true, maxlength: 120 },
-    f_publicacion: { type: Date, required: true },
+    f_inicio: { type: Date, required: true },
     duracion: { type: Number, required: true },
     num_participantes: { type: Number, required: true },
     descripcion: { type: String, required: true, maxlength: 200 },
