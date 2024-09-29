@@ -84,7 +84,7 @@ export const cambioDeClave = async (token, clave) => {
   // Verificar el token
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const userId = decoded.id;
-
+  console.log(userId);
   // Buscar al usuario por ID
   const user = await User.findById(userId);
   if (!user) {
@@ -94,4 +94,5 @@ export const cambioDeClave = async (token, clave) => {
   // Actualizar la contraseña del usuario
   user.clave = clave;
   await user.save();
+  return 'Clave actualizada exitosamente';
 };

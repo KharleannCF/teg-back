@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     maxlength: 100,
   },
+  valido: {
+    type: Boolean,
+    default: false,
+  },
   segundo_apellido: {
     type: String,
     maxlength: 100,
@@ -98,8 +102,10 @@ userSchema.pre('save', function (next) {
       console.log(err);
       return next(err);
     }
+
     this.correo = this.correo.toLowerCase();
     this.clave = hash;
+    console.log(this.clave);
     next();
   });
 });

@@ -6,30 +6,78 @@ import {
   cambioDeClave,
   titulosBorrar,
 } from './services.js';
-import Mailgun from 'mailgun.js';
-import formData from 'form-data';
-const mailgun = new Mailgun(formData);
+import SibApiV3Sdk from 'sib-api-v3-sdk';
+import jwt from 'jsonwebtoken';
+
+async function sendVerificationEmail(token, user) {
+  const defaultClient = SibApiV3Sdk.ApiClient.instance;
+  let apiKey = defaultClient.authentications['api-key'];
+  apiKey.apiKey = process.env.BREVO_API_KEY; // Use your Brevo API key
+
+  // Create an instance of the Brevo API
+  const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+  // Email content for email verification
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.subject = 'Email Verification';
+  sendSmtpEmail.htmlContent = `
+      <html>
+  <body>
+    <h1>Verificación de Correo Electrónico</h1>
+    <p>Gracias por registrarte. Por favor, verifica tu correo electrónico haciendo clic en el siguiente enlace:</p>
+    <a href="${process.env.URL_LINK}/verifyemail?token=${token}">Verificar mi correo</a>
+    <p>Si el enlace no funciona, copia y pega la siguiente URL en tu navegador:</p>
+    <p>${process.env.URL_LINK}/verifyemail?token=${token}</p>
+  </body>
+</html>
+    `;
+  sendSmtpEmail.sender = {
+    name: 'No Responder',
+    email: 'kharleann@gmail.com',
+  };
+  sendSmtpEmail.to = [
+    { email: user.correo, name: `${user.nombre} ${user.apellido}` },
+  ];
+
+  // Send the verification email using Brevo API
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
+}
 
 export const UserController = {
   async create(req, res) {
-    req.body.foto = req?.file ? req?.file?.path : null;
-    req.body.habilidades = req.body.habilidades
-      ? req.body.habilidades.split(',')
-      : [];
+    try {
+      req.body.foto = req?.file ? req?.file?.path : null;
+      req.body.habilidades = req.body.habilidades
+        ? req.body.habilidades.split(',')
+        : [];
 
-    const userFind = await UserModel.find({});
+      const userFind = await UserModel.find({ correo: req.body.correo }).exec();
+      if (userFind.length > 0) {
+        return res.status(400).json({ message: 'Correo ya registrado' });
+      }
 
-    const user = new UserModel(req.body);
-    user
-      .save()
-      .then((user) => {
-        const token = generateToken(user);
-        res.status(201).json(token);
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(400).json(err);
+      const user = new UserModel(req.body);
+      await user.save();
+
+      // Generate a verification token
+      const token = generateToken(user);
+
+      // Send verification email
+      await sendVerificationEmail(token, {
+        correo: req.body.correo,
+        nombre: user.nombre,
+        apellido: user.apellido,
       });
+
+      // Send the token in the response or success message
+      res.status(201).json({
+        message: 'User created successfully. Verification email sent.',
+        token,
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(400).json(err);
+    }
   },
   list(req, res) {
     UserModel.find({})
@@ -102,7 +150,6 @@ export const updateMe = async (req, res) => {
   if (req.file) {
     req.body.foto = req.file.path;
   }
-  console.log(req.body, req.user);
   UserModel.findByIdAndUpdate(req.user, req.body, { new: true })
     .lean()
     .exec()
@@ -118,16 +165,24 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await UserModel.findOne({ correo: email }).exec();
-    console.log(user);
     if (!user) {
-      return res.status(401).send({ error: 'Invalid email or password' });
+      return res.status(401).send({ error: 'Correo o contraseña inválidos' });
     }
     const same = await user.checkPassword(password);
     if (!same) {
-      return res.status(401).send({ error: 'Invalid email or password' });
+      return res.status(401).send({ error: 'Correo o contraseña inválidos' });
     }
-    console.log(user);
     const token = generateToken(user);
+
+    if (!user.valido) {
+      await sendVerificationEmail(token, user);
+
+      return res
+        .status(401)
+        .send({
+          error: 'Correo no verificado, se reenvió un correo de verificación',
+        });
+    }
     res.send({ token });
   } catch (err) {
     console.log(err);
@@ -166,40 +221,53 @@ export const borrar_titulos = async (req, res) => {
 
 export const olvido_clave = async (req, res) => {
   try {
-    const user = await UserModel.findOne({ email: req.body.email }).exec();
+    // Find the user by email
+    const user = await UserModel.findOne({ correo: req.body.email }).exec();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    // Generate a token for the user
     const token = generateToken(user);
-    const mg = mailgun.client({
-      username: 'api',
-      key: process.env.MAILGUN_API_KEY,
-    });
-    const data = {
-      from: 'No Responder <mailgun@sandboxb982d00d7b334ebda4bab10136ebd10d.mailgun.org>', // Dirección de correo desde donde se enviará
-      to: req.body.email, // Correo electrónico del destinatario
-      subject: 'Solicitud de Cambio de Contraseña', // Asunto del correo
-      html: `
+
+    // Brevo API configuration
+    const defaultClient = SibApiV3Sdk.ApiClient.instance;
+    let apiKey = defaultClient.authentications['api-key'];
+    apiKey.apiKey = provess.env.BREVO_API_KEY; // Store your Brevo API key in an environment variable
+
+    // Create an instance of the Brevo transactional email API
+    const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+    const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+
+    // Email content setup
+    sendSmtpEmail.subject = 'Solicitud de Cambio de Contraseña';
+    sendSmtpEmail.htmlContent = `
+      <html>
+      <body>
         <h1>Solicitud de Cambio de Contraseña</h1>
         <p>Hemos recibido una solicitud para cambiar la contraseña de tu cuenta.</p>
         <p>Si no solicitaste un cambio de contraseña, por favor ignora este correo.</p>
         <p>Haz clic en el enlace de abajo para cambiar tu contraseña:</p>
-        <a href="http://${process.env.URL_LINK}/recuperarClave?token=${token}">Cambiar mi contraseña</a>
+        <a href="${process.env.URL_LINK}/recuperarClave?token=${token}">Cambiar mi contraseña</a>
         <p>Si el enlace no funciona, copia y pega la siguiente URL en tu navegador:</p>
-        <p>http://${process.env.URL_LINK}/recuperarClave?token=${token}</p>
-      `,
+        <p>${process.env.URL_LINK}/recuperarClave?token=${token}</p>
+      </body>
+      </html>
+    `;
+    sendSmtpEmail.sender = {
+      name: 'No Responder',
+      email: 'kharleann@gmail.com',
     };
-    // Enviar el correo electrónico usando Mailgun
-    mg.messages
-      .create('sandboxb982d00d7b334ebda4bab10136ebd10d.mailgun.org', data)
-      .then((body) => {
-        console.log('Correo enviado: ', body);
-        return res.status(200).json({ message: 'Correo Enviado' });
-      })
-      .catch((err) => {
-        console.error('Error al enviar el correo: ', err);
-        return res.status(500).json({ message: 'Error al enviar el correo.' });
-      });
+    sendSmtpEmail.to = [
+      { email: req.body.email, name: `${user.nombre} ${user.apellido}` },
+    ];
+
+    // Send email using Brevo API
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+    return res.status(200).json({ message: 'Correo Enviado' });
   } catch (error) {
     console.error('Error en enviarCorreoCambioContraseña: ', error);
-    return res.status(error.statusCode || 400).json({ message: error });
+    return res.status(error.statusCode || 400).json({ message: error.message });
   }
 };
 
@@ -208,7 +276,6 @@ export const cambiar_clave = async (req, res) => {
     const { token, nuevaClave } = req.body;
 
     const response = await cambioDeClave(token, nuevaClave);
-
     // Enviar respuesta de éxito
     res.status(200).json({ message: 'Contraseña cambiada exitosamente.' });
   } catch (err) {
@@ -232,5 +299,40 @@ export const cambiar_clave = async (req, res) => {
 
     // Manejo de cualquier otro error no especificado
     return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+export const verifyEmail = async (req, res) => {
+  try {
+    // Extract token from request
+    const token = req.query.token; // Assumes token is sent via query parameter, adjust if token is sent differently (e.g., in headers)
+    if (!token) {
+      return res.status(400).json({ message: 'Token is required' });
+    }
+
+    // Validate token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded || !decoded.id) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    // Find user by the decoded token's user ID
+    const user = await UserModel.findById(decoded.id).exec();
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Set the 'valido' property to true
+    user.valido = true;
+    await user.save();
+    const logToken = generateToken(user);
+
+    // Send success response
+    return res
+      .status(200)
+      .json({ message: 'User verified successfully', token: logToken });
+  } catch (error) {
+    console.error('Error in verifyEmail endpoint:', error);
+    return res.status(500).json({ message: 'Internal server error', error });
   }
 };

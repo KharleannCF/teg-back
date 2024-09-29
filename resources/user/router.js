@@ -9,6 +9,7 @@ import {
   getMe,
   updateMe,
   borrar_titulos,
+  verifyEmail,
 } from './controller.js';
 import { validateSessionMiddleware } from './middleware.js';
 import { upload, uploadFileMiddleware } from '../../utils/uploader.js';
@@ -36,9 +37,15 @@ router.post('/login', (req, res) => {
   login(req, res);
 });
 
+router.get('/verifyEmail', verifyEmail);
+
 router.post('/forgot-password', olvido_clave);
 
 router.post('/cambiar_clave', cambiar_clave);
+
+router.get('/health', validateSessionMiddleware, (req, res) => {
+  res.status(200).send({ valid: !!req.user });
+});
 
 router.post(
   '/titulos',
