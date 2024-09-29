@@ -44,7 +44,11 @@ router.post('/forgot-password', olvido_clave);
 router.post('/cambiar_clave', cambiar_clave);
 
 router.get('/health', validateSessionMiddleware, (req, res) => {
-  res.status(200).send({ valid: !!req.user });
+  try {
+    res.status(200).send({ valid: !!req.user });
+  } catch (err) {
+    res.status(500).send({ valid: false });
+  }
 });
 
 router.post(
