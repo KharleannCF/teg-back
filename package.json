@@ -29,11 +29,13 @@
     "mongoose": "^8.6.2",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.0.3",
+    "nodemailer": "^6.9.15",
     "socket.io": "^4.7.5",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "nodemon": "^3.1.7",
     "swagger-autogen": "^2.23.7"
   }
 }

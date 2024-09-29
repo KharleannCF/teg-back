@@ -10,6 +10,10 @@ import Mailgun from 'mailgun.js';
 import formData from 'form-data';
 const mailgun = new Mailgun(formData);
 
+/* Probando email validacion */
+const { obtenerToken, obtenerDatosToken } = require('../config/jwt.config');
+const { obtenerDatos, sendmail} = require('../utils/mail.config.js');
+
 export const UserController = {
   async create(req, res) {
     req.body.foto = req?.file ? req?.file?.path : null;
@@ -234,3 +238,5 @@ export const cambiar_clave = async (req, res) => {
     return res.status(500).json({ error: 'Error interno del servidor.' });
   }
 };
+
+
