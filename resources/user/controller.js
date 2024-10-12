@@ -177,11 +177,9 @@ export const login = async (req, res) => {
     if (!user.valido) {
       await sendVerificationEmail(token, user);
 
-      return res
-        .status(401)
-        .send({
-          error: 'Correo no verificado, se reenvió un correo de verificación',
-        });
+      return res.status(401).send({
+        error: 'Correo no verificado, se reenvió un correo de verificación',
+      });
     }
     res.send({ token });
   } catch (err) {
@@ -232,7 +230,7 @@ export const olvido_clave = async (req, res) => {
     // Brevo API configuration
     const defaultClient = SibApiV3Sdk.ApiClient.instance;
     let apiKey = defaultClient.authentications['api-key'];
-    apiKey.apiKey = provess.env.BREVO_API_KEY; // Store your Brevo API key in an environment variable
+    apiKey.apiKey = process.env.BREVO_API_KEY; // Store your Brevo API key in an environment variable
 
     // Create an instance of the Brevo transactional email API
     const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();

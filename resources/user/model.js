@@ -86,6 +86,10 @@ const userSchema = new mongoose.Schema({
       foto: { type: String },
     },
   ],
+  esMiembroDeLaComunidad: {
+    type: Boolean,
+    default: false,
+  },
   empresa: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'empresa', // Nombre del modelo de empresa
